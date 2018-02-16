@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "CsvImporter": {
+      "commandName": "Project",
+      "commandLineArgs": "--file export.csv"
+    }
+  }
+}
