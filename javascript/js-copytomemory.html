@@ -1,0 +1,70 @@
+<html>
+    <head>
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+
+        <style>
+            div.copyableTemplate div{
+                    display:none; 
+                }
+
+            div.copyableTemplate:hover div{
+                display:inline;
+            }
+
+            .icon-clipboard:before {
+                content: " Copy URL... ";
+                cursor: pointer;
+                font-size: 0.9em;
+                background-color: crimson;
+                color: white;
+                padding: 3px;
+                border-radius: 10px;
+            }
+        </style>
+
+        <script>
+            $(document).ready(function(){
+                // Init Clipboard
+                var initClipboard = function() {
+                    $('body').on('click', 'div.icon-clipboard', function() {
+                        console.log('onClick');
+
+                        var data = $(this).data('clipboard');
+                        $('#clipboard').show();
+                        $('#clipboard').val(data);
+
+                        if (data) {
+                            $('#clipboard')[0].select();
+                        }
+
+                        // try copying to memory
+                        try {
+                            document.execCommand('copy');
+                            alert('Value: "' +  data + '" copied to memory!');
+                        } catch (err) {
+                            console.log('Error copying data to clipboard. Please check if your browser supports this feature..');
+                        }
+
+                        // need to show/hide else, textarea loses value
+                        $('#clipboard').hide();
+                    });
+                }
+
+                initClipboard();
+            });
+
+    </script>
+    </head>
+    <body>
+        <h1>Copy data using Javascript and jQuery</h1>
+        <textarea id="clipboard" style="display:none;"></textarea>
+        <div class="copyableTemplate">
+            Quisque eleifend sapien sed interdum fermentum. Sed suscipit nibh massa, in maximus nulla imperdiet vitae.
+            <div class="icon-clipboard" data-clipboard="http://lipsum.com/" title="Click to copy the Id to the clipboard"></div>
+        </div>
+        <p style="padding-top:20px">
+            Hope it helps!<br>
+            Bruno Hildenbrand
+        </p>
+    </body>
+</html>
