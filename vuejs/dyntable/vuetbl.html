@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+
+    <title>Hello, world!</title>
+  </head>
+  <body class="p-5">
+	<h2>Agenda</h2>
+	<div id="agenda">
+		<table class="table mt-4">
+			<thead>
+				<tr>
+					<th scope="col">#</th>
+					<th scope="col" style="width: 300px">Topic</th>
+					<th scope="col" class="text-center" style="width: 300px">Required</th>
+					<th scope="col" class="text-center" style="width: 300px">Actions</th>
+				</tr>
+			</thead>
+			<tbody v-if="topics.length > 0">
+				<tr v-for="(t, i) in topics">
+					<th scope="row">{{ i + 1 }}</th>
+					<td>
+						<span v-if="t.editing">
+							<input v-model="t.title" @@keyup.enter="t.update(i)"/>
+						</span>
+						<span v-else>
+							{{ t.title }}
+						</span>
+					</td>
+					<td class="text-center">
+						<span v-if="t.editing">
+							<input type="radio" value="true" v-model="t.required"> Yes
+							<input type="radio" value="false" v-model="t.required"> No
+						</span>
+						<span v-else>
+							{{ t.required == "true" ? 'Yes' : 'No' }}
+						</span>
+					</td>
+					<td class="text-center">
+						<span v-if="t.editing">
+							<button class="btn btn-outline-info btn-sm" v-on:click="t.update(i)">Update</button>
+							<button class="btn btn-outline-danger btn-sm" v-on:click="t.cancel(i)">Cancel</button>
+						</span>
+						<span v-else>
+							<button class="btn btn-outline-info btn-sm" v-on:click="t.edit(i)">Edit</button>
+							<button class="btn btn-outline-danger btn-sm" v-on:click="t.remove(i)">Remove</button>
+						</span>
+					</td>
+				</tr>
+			</tbody>
+			<tbody v-else>
+				<tr><td colspan="4" class="text-center">Nothing here yet =(</td></tr>
+			</tbody>
+		</table>
+		<div class="text-right px-1">
+			<hr />
+			<button class="btn btn-outline-warning" v-on:click="save">Save Agenda</button>
+			<button class="btn btn-outline-info" v-on:click="add">Add Topic</button>
+		</div>
+	</div>
+		
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+	
+	<!-- Vue development version, includes helpful console warnings -->
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	
+	<script>
+		const Topic = function(model){
+			var self = this;
+			var m = model || {};
+			
+			self.oTitle = m.title || "";
+			self.title = m.title;
+			self.required = m.required || false;
+			self.orequired = self.required;
+			self.editing = m.editing;
+
+			self.update = function(i){
+				if ((self.title || "").length < 3){
+					alert('At least 3 chars are required to save');
+					return;
+				}
+
+				agenda.topics[i].title = self.title;
+				self.editing = false;
+			}
+
+			self.edit = function(){
+				agenda.cancelEdits();
+				self.editing = true;
+			}
+
+			self.cancel = function(i){
+				if (!self.oTitle){
+					agenda.topics.splice(i,1);
+					return;
+				}
+
+				self.title = self.oTitle;
+				self.required = self.orequired;
+				self.editing = false;
+			}
+
+			self.remove = function(i){
+				if (confirm('Are you sure you want to remove this topic?')){
+					agenda.topics.splice(i,1);
+				}
+			}
+			
+			return self;
+		}
+
+		const agenda = new Vue({
+			el: '#agenda',
+			data: {
+				topics: [
+					new Topic({ title: 'Item 1' }),
+					new Topic({ title: 'Item 2' }),
+					new Topic({ title: 'Item 3' }),
+				]
+			},
+			computed: {
+
+			},
+			methods: {
+				add() {
+					this.topics.push(new Topic({ editing: true }))
+				},
+				save() {
+					alert("todo :: submit to server");
+				},
+				cancelEdits() {
+					this.topics.forEach(el => el.editing = false );
+				}
+			}
+		});
+		
+	</script>
+	
+	
+	
+	
+	
+  </body>
+</html>
